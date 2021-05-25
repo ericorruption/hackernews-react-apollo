@@ -12,6 +12,10 @@ import {
 
 const httpLink = createHttpLink({
   uri: 'http://localhost:4000',
+  headers: {
+    Authorization:
+      'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTYyMTQ0NTgzNH0.pfXfg2wr7bWkI18RrslVMxZ5aLdBNtXUM1vvKeanhtE',
+  },
 });
 
 const client = new ApolloClient({
