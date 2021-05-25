@@ -1,24 +1,26 @@
+import { gql, useQuery } from '@apollo/client';
 import { FunctionComponent } from 'react';
-import { Link as LinkType } from './generated/graphql';
+import { Query } from './generated/graphql';
 import { Link } from './Link';
 
-const links: Omit<LinkType, 'votes'>[] = [
+const FEED_QUERY = gql`
   {
-    id: '1',
-    description: 'Prisma gives you a powerful database toolkit 😎',
-    url: 'https://prisma.io',
-  },
-  {
-    id: '2',
-    description: 'The best GraphQL client',
-    url: 'https://www.apollographql.com/docs/react/',
-  },
-];
+    feed {
+      links {
+        id
+        url
+        description
+      }
+    }
+  }
+`;
 
-export const LinkList: FunctionComponent = () => (
-  <>
-    {links.map((link) => (
-      <Link key={link.id} {...link} />
-    ))}
-  </>
-);
+export const LinkList: FunctionComponent = () => {
+  const { data } = useQuery<Pick<Query, 'feed'>>(FEED_QUERY);
+
+  return (
+    <>
+      {data && data.feed.links.map((link) => <Link key={link.id} {...link} />)}
+    </>
+  );
+};
