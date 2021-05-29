@@ -13,23 +13,20 @@ const LOGIN_MUTATION = gql`
   }
 `;
 
-// TODO improve acessibility
+// TODO error handling
 export const Login: FunctionComponent = () => {
   const history = useHistory();
   const { setToken } = useContext(AuthContext);
 
-  const [formState, setFormState] = useState({
-    email: '',
-    password: '',
-    name: '',
-  });
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   const [login] = useMutation<Pick<Mutation, 'login'>, MutationLoginArgs>(
     LOGIN_MUTATION,
     {
       variables: {
-        email: formState.email,
-        password: formState.password,
+        email,
+        password,
       },
       onCompleted: ({ login }) => {
         if (!login || !login.token) {
@@ -43,37 +40,39 @@ export const Login: FunctionComponent = () => {
   );
 
   return (
-    <div>
-      <h4 className="mv3">Login</h4>
-      <div className="flex flex-column">
-        <input
-          value={formState.email}
-          onChange={(e) =>
-            setFormState({
-              ...formState,
-              email: e.target.value,
-            })
-          }
-          type="text"
-          placeholder="Your email address"
-        />
-        <input
-          value={formState.password}
-          onChange={(e) =>
-            setFormState({
-              ...formState,
-              password: e.target.value,
-            })
-          }
-          type="password"
-          placeholder="Choose a safe password"
-        />
-      </div>
-      <div className="flex mt3">
-        <button className="pointer mr2 button" onClick={() => login()}>
-          login
-        </button>
-      </div>
-    </div>
+    <main>
+      <h1 className="f4 mv3">Login</h1>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          login();
+        }}
+      >
+        <div className="flex flex-column">
+          <label>
+            <span className="db">Email</span>
+            <input
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              type="email"
+              required
+            />
+          </label>
+
+          <label>
+            <span className="db">Password</span>
+            <input
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              type="password"
+              required
+            />
+          </label>
+        </div>
+        <div className="flex mt3">
+          <button className="pointer mr2 button">login</button>
+        </div>
+      </form>
+    </main>
   );
 };
