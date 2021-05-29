@@ -7,6 +7,7 @@ import { Login } from './auth/Login';
 import { routes } from './routes';
 import { Logout } from './auth/Logout';
 import { Signup } from './auth/Signup';
+import { Search } from './Search';
 
 const App: FunctionComponent = () => (
   <div className="center w85">
@@ -21,6 +22,9 @@ const App: FunctionComponent = () => (
         </Route>
         <Route path={routes.logout}>
           <Logout />
+        </Route>
+        <Route path={routes.search}>
+          <Search />
         </Route>
         <Route path={routes.createLink}>
           <CreateLink />
