@@ -1,8 +1,13 @@
 import { useMutation, gql } from '@apollo/client';
 import { FunctionComponent, useState } from 'react';
 import { useHistory } from 'react-router';
-import { Mutation, MutationCreateLinkArgs } from './generated/graphql';
+import {
+  Mutation,
+  MutationCreateLinkArgs,
+  QueryFeedArgs,
+} from './generated/graphql';
 import { routes } from './routes';
+import { FEED_QUERY, FeedQuery } from './LinkList';
 
 const CREATE_LINK_MUTATION = gql`
   mutation CreateLinkMutation($description: String!, $url: String!) {
@@ -27,6 +32,28 @@ export const CreateLink: FunctionComponent = () => {
     variables: {
       description,
       url,
+    },
+    update: (cache, { data }) => {
+      if (!data) {
+        return;
+      }
+
+      const newLink = data.createLink;
+
+      // TODO orderBy
+      const cacheData = cache.readQuery<FeedQuery, QueryFeedArgs>({
+        query: FEED_QUERY,
+      });
+
+      cache.writeQuery<FeedQuery, QueryFeedArgs>({
+        query: FEED_QUERY,
+        data: {
+          feed: {
+            links: [newLink, ...(cacheData?.feed.links ?? [])],
+            count: cacheData?.feed.count ?? 0 + 1,
+          },
+        },
+      });
     },
     onCompleted: () => history.push(routes.linkList),
   });

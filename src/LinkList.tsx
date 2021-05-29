@@ -3,7 +3,7 @@ import { FunctionComponent } from 'react';
 import { Query } from './generated/graphql';
 import { Link } from './Link';
 
-const FEED_QUERY = gql`
+export const FEED_QUERY = gql`
   {
     feed {
       links {
@@ -26,8 +26,10 @@ const FEED_QUERY = gql`
   }
 `;
 
+export type FeedQuery = Pick<Query, 'feed'>;
+
 export const LinkList: FunctionComponent = () => {
-  const { data } = useQuery<Pick<Query, 'feed'>>(FEED_QUERY);
+  const { data } = useQuery<FeedQuery>(FEED_QUERY);
 
   return (
     <>
