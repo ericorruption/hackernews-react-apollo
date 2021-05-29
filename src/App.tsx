@@ -1,13 +1,14 @@
 import { FunctionComponent } from 'react';
 import { Route, Switch } from 'react-router';
-import { CreateLink } from './CreateLink';
+
 import { Header } from './Header';
-import { LinkList } from './LinkList';
-import { Login } from './auth/Login';
 import { routes } from './routes';
+import { Login } from './auth/Login';
 import { Logout } from './auth/Logout';
 import { Signup } from './auth/Signup';
-import { Search } from './Search';
+import { CreateLink } from './links/CreateLink';
+import { LinkList } from './links/LinkList';
+import { Search } from './links/Search';
 
 const App: FunctionComponent = () => (
   <div className="center w85">

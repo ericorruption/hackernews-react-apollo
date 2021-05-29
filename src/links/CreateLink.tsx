@@ -5,8 +5,8 @@ import {
   Mutation,
   MutationCreateLinkArgs,
   QueryFeedArgs,
-} from './generated/graphql';
-import { routes } from './routes';
+} from '../generated/graphql';
+import { routes } from '../routes';
 import { FEED_QUERY, FeedQuery } from './LinkList';
 
 const CREATE_LINK_MUTATION = gql`
