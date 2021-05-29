@@ -10,6 +10,16 @@ const FEED_QUERY = gql`
         id
         url
         description
+        postedBy {
+          id
+          name
+        }
+        votes {
+          id
+          user {
+            id
+          }
+        }
       }
     }
   }
@@ -20,7 +30,10 @@ export const LinkList: FunctionComponent = () => {
 
   return (
     <>
-      {data && data.feed.links.map((link) => <Link key={link.id} {...link} />)}
+      {data &&
+        data.feed.links.map((link, index) => (
+          <Link key={link.id} index={index} link={link} />
+        ))}
     </>
   );
 };
