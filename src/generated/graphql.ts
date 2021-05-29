@@ -9,6 +9,7 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  DateTime: any;
   /** The `Upload` scalar type represents a file upload. */
   Upload: any;
 };
@@ -25,6 +26,7 @@ export enum CacheControlScope {
   Private = 'PRIVATE'
 }
 
+
 export type Feed = {
   __typename?: 'Feed';
   links: Array<Link>;
@@ -38,6 +40,7 @@ export type Link = {
   url: Scalars['String'];
   postedBy?: Maybe<User>;
   votes: Array<Vote>;
+  createdAt: Scalars['DateTime'];
 };
 
 export type LinksOrderByInput = {
