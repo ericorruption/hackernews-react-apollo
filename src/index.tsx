@@ -3,24 +3,37 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import type { HttpOptions } from '@apollo/client';
 import {
   ApolloClient,
   ApolloProvider,
   createHttpLink,
   InMemoryCache,
 } from '@apollo/client';
+import { setContext } from '@apollo/client/link/context';
 import { BrowserRouter } from 'react-router-dom';
+import Cookies from 'js-cookie';
+import { AuthProvider, AUTH_TOKEN } from './auth/AuthProvider';
 
 const httpLink = createHttpLink({
   uri: 'http://localhost:4000',
-  headers: {
-    Authorization:
-      'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTYyMTQ0NTgzNH0.pfXfg2wr7bWkI18RrslVMxZ5aLdBNtXUM1vvKeanhtE',
-  },
+});
+
+const authLink = setContext((_, { headers }) => {
+  const token = Cookies.get(AUTH_TOKEN);
+
+  const options: HttpOptions = { headers: { ...headers } };
+
+  // TODO investigate why 'undefined' is stringified
+  if (token) {
+    options.headers.authorization = `Bearer ${token}`;
+  }
+
+  return options;
 });
 
 const client = new ApolloClient({
-  link: httpLink,
+  link: authLink.concat(httpLink),
   cache: new InMemoryCache(),
 });
 
@@ -28,7 +41,9 @@ ReactDOM.render(
   <React.StrictMode>
     <BrowserRouter>
       <ApolloProvider client={client}>
-        <App />
+        <AuthProvider>
+          <App />
+        </AuthProvider>
       </ApolloProvider>
     </BrowserRouter>
   </React.StrictMode>,
