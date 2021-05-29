@@ -5,7 +5,7 @@ import { AuthContext } from './auth/AuthContext';
 
 // TODO add other routes to config
 export const Header: FunctionComponent = () => {
-  const { token: authToken } = useContext(AuthContext);
+  const { isLoggedIn } = useContext(AuthContext);
 
   return (
     <div className="flex pa1 justify-between nowrap orange">
@@ -22,7 +22,7 @@ export const Header: FunctionComponent = () => {
         <Link to="/search" className="ml1 no-underline black">
           search
         </Link>
-        {authToken && (
+        {isLoggedIn && (
           <div className="flex">
             <div className="ml1">|</div>
             <Link to={routes.createLink} className="ml1 no-underline black">
@@ -32,7 +32,7 @@ export const Header: FunctionComponent = () => {
         )}
       </div>
       <div className="flex flex-fixed">
-        {authToken ? (
+        {isLoggedIn ? (
           <Link to={routes.logout} className="ml1 no-underline black">
             logout
           </Link>

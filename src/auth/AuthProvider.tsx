@@ -20,6 +20,8 @@ export const AuthProvider: FunctionComponent = ({ children }) => {
       value={{
         token,
         setToken,
+        isLoggedIn: !!token,
+        logout: () => setToken(undefined),
       }}
     >
       {children}

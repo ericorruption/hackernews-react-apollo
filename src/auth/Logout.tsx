@@ -4,9 +4,9 @@ import { routes } from '../routes';
 import { AuthContext } from './AuthContext';
 
 export const Logout: FunctionComponent = () => {
-  const { setToken } = useContext(AuthContext);
+  const { logout } = useContext(AuthContext);
 
-  setToken(undefined);
+  logout();
 
   return <Redirect to={routes.linkList} />;
 };

@@ -5,10 +5,13 @@ export type Token = string | undefined;
 interface IAuthContext {
   token: Token;
   setToken: Dispatch<SetStateAction<Token>>;
+  isLoggedIn: boolean;
+  logout: VoidFunction;
 }
 
-// TODO refactor to have handy methods (login, logout)
 export const AuthContext = createContext<IAuthContext>({
   token: undefined,
   setToken: () => undefined,
+  isLoggedIn: false,
+  logout: () => {},
 });
