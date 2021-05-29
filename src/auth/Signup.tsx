@@ -2,39 +2,41 @@ import { gql, useMutation } from '@apollo/client';
 import { FunctionComponent, useContext, useState } from 'react';
 import { useHistory } from 'react-router';
 import { Link } from 'react-router-dom';
-import { Mutation, MutationLoginArgs } from '../generated/graphql';
+import { Mutation, MutationSignupArgs } from '../generated/graphql';
 import { routes } from '../routes';
 import { AuthContext } from './AuthContext';
 
-const LOGIN_MUTATION = gql`
-  mutation LoginMutation($email: String!, $password: String!) {
-    login(email: $email, password: $password) {
+const SIGNUP_MUTATION = gql`
+  mutation SignupMutation($email: String!, $password: String!, $name: String!) {
+    signup(email: $email, password: $password, name: $name) {
       token
     }
   }
 `;
 
 // TODO error handling
-export const Login: FunctionComponent = () => {
+export const Signup: FunctionComponent = () => {
   const history = useHistory();
   const { setToken } = useContext(AuthContext);
 
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const [login] = useMutation<Pick<Mutation, 'login'>, MutationLoginArgs>(
-    LOGIN_MUTATION,
+  const [signup] = useMutation<Pick<Mutation, 'signup'>, MutationSignupArgs>(
+    SIGNUP_MUTATION,
     {
       variables: {
+        name,
         email,
         password,
       },
-      onCompleted: ({ login }) => {
-        if (!login || !login.token) {
+      onCompleted: ({ signup }) => {
+        if (!signup || !signup.token) {
           return;
         }
 
-        setToken(login.token);
+        setToken(signup.token);
         history.push(routes.linkList);
       },
     }
@@ -42,14 +44,23 @@ export const Login: FunctionComponent = () => {
 
   return (
     <main>
-      <h1 className="f4 mv3">Login</h1>
+      <h1 className="f4 mv3">Sign Up</h1>
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          login();
+          signup();
         }}
       >
         <div className="flex flex-column">
+          <label>
+            <span className="db">Your name</span>
+            <input
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              type="text"
+              required
+            />
+          </label>
           <label>
             <span className="db">Email</span>
             <input
@@ -71,9 +82,9 @@ export const Login: FunctionComponent = () => {
           </label>
         </div>
         <div className="flex mt3">
-          <button className="pointer mr2 button">login</button>
-          <Link className="button no-underline" to={routes.signup}>
-            need to create an account?
+          <button className="pointer mr2 button">create account</button>
+          <Link to={routes.login} className="button no-underline">
+            already have an account?
           </Link>
         </div>
       </form>

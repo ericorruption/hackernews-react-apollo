@@ -6,12 +6,16 @@ import { LinkList } from './LinkList';
 import { Login } from './auth/Login';
 import { routes } from './routes';
 import { Logout } from './auth/Logout';
+import { Signup } from './auth/Signup';
 
 const App: FunctionComponent = () => (
   <div className="center w85">
     <Header />
     <div className="ph3 pv1 background-gray">
       <Switch>
+        <Route path={routes.signup}>
+          <Signup />
+        </Route>
         <Route path={routes.login}>
           <Login />
         </Route>
