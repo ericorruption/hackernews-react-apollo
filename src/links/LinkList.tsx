@@ -1,6 +1,6 @@
 import { gql, useQuery } from '@apollo/client';
 import { FunctionComponent } from 'react';
-import { Query } from './generated/graphql';
+import { Query } from '../generated/graphql';
 import { Link } from './Link';
 
 export const FEED_QUERY = gql`

@@ -1,11 +1,11 @@
 import { gql, useMutation } from '@apollo/client';
 import { FunctionComponent, useContext } from 'react';
-import { AuthContext } from './auth/AuthContext';
+import { AuthContext } from '../auth/AuthContext';
 import type {
   Link as LinkType,
   Mutation,
   MutationVoteArgs,
-} from './generated/graphql';
+} from '../generated/graphql';
 
 interface Props {
   index: number;

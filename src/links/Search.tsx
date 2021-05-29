@@ -1,6 +1,6 @@
 import { gql, useLazyQuery } from '@apollo/client';
 import { FunctionComponent, useState } from 'react';
-import { Query, QueryFeedArgs } from './generated/graphql';
+import { Query, QueryFeedArgs } from '../generated/graphql';
 import { Link } from './Link';
 
 const FEED_SEARCH_QUERY = gql`
