@@ -7,7 +7,7 @@ import {
   QueryFeedArgs,
 } from '../generated/graphql';
 import { routes } from '../routes';
-import { FEED_QUERY, FeedQuery } from './LinkList';
+import { FEED_QUERY, FeedQuery, getFeedQueryVariables } from './LinkList';
 
 const CREATE_LINK_MUTATION = gql`
   mutation CreateLinkMutation($description: String!, $url: String!) {
@@ -40,9 +40,9 @@ export const CreateLink: FunctionComponent = () => {
 
       const newLink = data.createLink;
 
-      // TODO orderBy
       const cacheData = cache.readQuery<FeedQuery, QueryFeedArgs>({
         query: FEED_QUERY,
+        variables: getFeedQueryVariables(false, 0),
       });
 
       cache.writeQuery<FeedQuery, QueryFeedArgs>({
@@ -53,6 +53,7 @@ export const CreateLink: FunctionComponent = () => {
             count: cacheData?.feed.count ?? 0 + 1,
           },
         },
+        variables: getFeedQueryVariables(false, 0),
       });
     },
     onCompleted: () => history.push(routes.linkList),
