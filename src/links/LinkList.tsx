@@ -1,15 +1,17 @@
 import { gql, useQuery } from '@apollo/client';
 import { FunctionComponent } from 'react';
 import { useParams, useRouteMatch } from 'react-router';
+import { Link } from 'react-router-dom';
 import { Query, QueryFeedArgs, Sort, Subscription } from '../generated/graphql';
 import { routes } from '../routes';
-import { Link } from './Link';
+import { Link as LinkItem } from './Link';
 
 export type FeedQuery = Pick<Query, 'feed'>;
 
 export const FEED_QUERY = gql`
   query FeedQuery($take: Int, $skip: Int, $orderBy: LinksOrderByInput) {
     feed(take: $take, skip: $skip, orderBy: $orderBy) {
+      count
       links {
         id
         url
@@ -85,14 +87,12 @@ export const LinkList: FunctionComponent = () => {
   const params = useParams<{ page?: string }>();
   // TODO turn into separate page?
   const isTopPage = routeMatch.path === routes.top;
-  const pageIndex = params.page
-    ? (parseInt(params.page, 10) - 1) * LINKS_PER_PAGE
-    : 0;
+  const pageIndex = params.page ? parseInt(params.page, 10) - 1 : 0;
 
-  const { data, subscribeToMore } = useQuery<FeedQuery, QueryFeedArgs>(
-    FEED_QUERY,
-    { variables: getFeedQueryVariables(isTopPage, pageIndex) }
-  );
+  const { loading, error, data, subscribeToMore } = useQuery<
+    FeedQuery,
+    QueryFeedArgs
+  >(FEED_QUERY, { variables: getFeedQueryVariables(isTopPage, pageIndex) });
 
   subscribeToMore<Pick<Subscription, 'newLink'>>({
     document: NEW_LINKS_SUBSCRIPTION,
@@ -124,12 +124,45 @@ export const LinkList: FunctionComponent = () => {
     document: NEW_VOTES_SUBSCRIPTION,
   });
 
+  const displayNextLink =
+    (data?.feed.count ?? 0) / LINKS_PER_PAGE > pageIndex + 1;
+
   return (
     <>
+      {loading && <p>Loading&hellip;</p>}
+      {error && <pre>{JSON.stringify(error, null, 2)}</pre>}
       {data &&
+        isTopPage &&
+        [...data.feed.links]
+          .sort((a, b) => b.votes.length - a.votes.length)
+          .map((link, index) => (
+            <LinkItem key={link.id} index={index} link={link} />
+          ))}
+      {data &&
+        !isTopPage &&
         data.feed.links.map((link, index) => (
-          <Link key={link.id} index={index} link={link} />
+          <LinkItem key={link.id} index={index} link={link} />
         ))}
+      {!isTopPage && (
+        <div className="flex ml4 mv3 gray">
+          {pageIndex > 0 && (
+            <Link
+              to={`/new/${pageIndex}`}
+              className="button pointer no-underline mr2"
+            >
+              Previous
+            </Link>
+          )}
+          {displayNextLink && (
+            <Link
+              to={`/new/${pageIndex + 2}`}
+              className="button pointer no-underline"
+            >
+              Next
+            </Link>
+          )}
+        </div>
+      )}
     </>
   );
 };
