@@ -1,13 +1,15 @@
 import { gql, useQuery } from '@apollo/client';
 import { FunctionComponent } from 'react';
-import { Query, Subscription } from '../generated/graphql';
+import { useParams, useRouteMatch } from 'react-router';
+import { Query, QueryFeedArgs, Sort, Subscription } from '../generated/graphql';
+import { routes } from '../routes';
 import { Link } from './Link';
 
 export type FeedQuery = Pick<Query, 'feed'>;
 
 export const FEED_QUERY = gql`
-  {
-    feed {
+  query FeedQuery($take: Int, $skip: Int, $orderBy: LinksOrderByInput) {
+    feed(take: $take, skip: $skip, orderBy: $orderBy) {
       links {
         id
         url
@@ -76,8 +78,21 @@ const NEW_VOTES_SUBSCRIPTION = gql`
   }
 `;
 
+const LINKS_PER_PAGE = 5;
+
 export const LinkList: FunctionComponent = () => {
-  const { data, subscribeToMore } = useQuery<FeedQuery>(FEED_QUERY);
+  const routeMatch = useRouteMatch();
+  const params = useParams<{ page?: string }>();
+  // TODO turn into separate page?
+  const isTopPage = routeMatch.path === routes.top;
+  const pageIndex = params.page
+    ? (parseInt(params.page, 10) - 1) * LINKS_PER_PAGE
+    : 0;
+
+  const { data, subscribeToMore } = useQuery<FeedQuery, QueryFeedArgs>(
+    FEED_QUERY,
+    { variables: getFeedQueryVariables(isTopPage, pageIndex) }
+  );
 
   subscribeToMore<Pick<Subscription, 'newLink'>>({
     document: NEW_LINKS_SUBSCRIPTION,
@@ -118,3 +133,12 @@ export const LinkList: FunctionComponent = () => {
     </>
   );
 };
+
+export const getFeedQueryVariables = (
+  isTopPage: boolean,
+  pageIndex: number
+): QueryFeedArgs => ({
+  skip: isTopPage ? 0 : pageIndex * LINKS_PER_PAGE,
+  take: isTopPage ? 100 : LINKS_PER_PAGE,
+  orderBy: { createdAt: Sort.Desc },
+});

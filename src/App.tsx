@@ -30,7 +30,14 @@ const App: FunctionComponent = () => (
         <Route path={routes.createLink}>
           <CreateLink />
         </Route>
+        <Route path={routes.top}>
+          <LinkList />
+        </Route>
+        <Route path={routes.linkPage}>
+          <LinkList />
+        </Route>
         <Route exact path={routes.linkList}>
+          {/* TODO redirect to /new/1 */}
           <LinkList />
         </Route>
       </Switch>

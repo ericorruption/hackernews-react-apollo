@@ -3,7 +3,6 @@ import { FunctionComponent, useContext } from 'react';
 import { routes } from './routes';
 import { AuthContext } from './auth/AuthContext';
 
-// TODO add other routes to config
 export const Header: FunctionComponent = () => {
   const { isLoggedIn } = useContext(AuthContext);
 
@@ -15,7 +14,7 @@ export const Header: FunctionComponent = () => {
           new
         </Link>
         <div className="ml1">|</div>
-        <Link to="/top" className="ml1 no-underline black">
+        <Link to={routes.top} className="ml1 no-underline black">
           top
         </Link>
         <div className="ml1">|</div>
